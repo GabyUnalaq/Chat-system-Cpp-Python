@@ -1,6 +1,6 @@
 # Chat system using C++ and Python
 
-This project is a simple chat system build for Windows that has it's server written in C++ and Client in Python. It allows for multiple clients to be connected at once and individual messages between them.
+This project is a simple chat system build for Windows that has it's server written in C++ and it's Client in Python. It allows for multiple clients to be connected at the same time and it also allows them to message each other privately.
 
 ## Getting started
 ### Clone the repository
@@ -12,7 +12,7 @@ git clone https://github.com/GabyUnalaq/Chat-system-Cpp-Python.git
 ```
 
 ### Building the Server
-The Server was generated using CMake gui version 3.17.0 and build using Visual Studio 2019.
+The Server was generated using CMake gui version 3.17.0 and it was built using Visual Studio 2019.
 After running CMake in the server folder and building the solution, the server is ready to be used.
 
 ### Building the Client
@@ -26,12 +26,12 @@ After that, you can:
  - build yourself an executable using the `ExeMaker_pyinstaller.bat`. This will create a folder called `dist` and inside you will find the final application. To run, the `ClientInterface.ui` has to be in the same folder as the compiler executable.
 
 ## Contributing
-If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue and we will continue there. 
+If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue and we will continue from there. 
 
 Don't forget to give the project a star! Thanks again!
 
 ## Contact
-Tomuta Gabriel - [https://www.linkedin.com/in/gabyunalaq/](https://www.linkedin.com/in/gabyunalaq/)
+Tomuta Gabriel - [Linkedin](https://www.linkedin.com/in/gabyunalaq/) - [RovisLab](https://www.rovislab.com/tomuta_gabriel.html)
 
 Project Link: [https://github.com/GabyUnalaq/Chat-system-Cpp-Python](https://github.com/GabyUnalaq/Chat-system-Cpp-Python)
 
