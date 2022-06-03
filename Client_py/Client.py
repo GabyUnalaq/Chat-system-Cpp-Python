@@ -6,13 +6,14 @@ Author:
     Tomuta Gabriel
 Date:
     01.06.2022
-Version: 1.0
+Version:
+    1.0
 
 Description
 ----------
-Script contains class that creates the window and
+Script contains the class that creates the window and
 handles all the communication.
-To create a client, check the outside method:
+To create a client, check the method:
     test_client()
 """
 
@@ -65,12 +66,11 @@ class ClientWindow(QWidget):
         self.QtConsole = self.findChild(QTextEdit, 'QtConsole')
 
         # Members
-        self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.client = None
         self.server_ip = SERVER_IP
         self.server_port = SERVER_PORT
         self.name = None
         self.connected = False
-        self.expecting_confirmation = False
         self.confirmation = False
         self.last_chat_name = ''
         self.last_chat_dest = ''
@@ -87,8 +87,8 @@ class ClientWindow(QWidget):
         self.init_window()
 
         # Main loop
-        self.run_loop = True
-        self.loop = Thread(target=self.main_loop)
+        self.run_loop = False
+        self.loop = None
 
     # Initialization ---------------------------------------------------------------------------------------------------
     def init_window(self):
@@ -115,6 +115,7 @@ class ClientWindow(QWidget):
     # Methods ----------------------------------------------------------------------------------------------------------
     def connect_client(self) -> bool:
         """ Method used to connect to the server at the given ip and port """
+        self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.write_to_console(f"Attempting connection to server on {self.server_ip}:{self.server_port}.")
         try:
             self.client.connect((str(self.server_ip), int(self.server_port)))
@@ -138,6 +139,7 @@ class ClientWindow(QWidget):
 
         self.client.settimeout(0.00001)
         self.run_loop = True
+        self.loop = Thread(target=self.main_loop)
         self.loop.start()
         return True
 
@@ -165,7 +167,6 @@ class ClientWindow(QWidget):
 
         # Expect feedback that the message got to the server
         self.confirmation = False
-        self.expecting_confirmation = True
         time.sleep(0.2)
         return self.confirmation
 
@@ -189,7 +190,6 @@ class ClientWindow(QWidget):
             pass
         else:
             data = data.decode("utf-8")
-            # self.write_to_console("Message received: {}".format(data))
 
             split_data = data.split('|')
             # Message received
@@ -202,14 +202,9 @@ class ClientWindow(QWidget):
 
             # Code received
             else:
-                if self.expecting_confirmation:  # If message was sent recently and awaiting confirmation
-                    if int(data) != Status_Codes.MsgSuccess.value:
-                        self.write_to_console(f"Message failed with error code {Status_Codes(int(data)).name}")
-                        self.confirmation = False
-                    else:
-                        self.confirmation = True
-                    self.expecting_confirmation = False
-                else:  # If other code was send
+                if int(data) == Status_Codes.MsgSuccess.value:  # If received success from the server
+                    self.confirmation = True
+                else:
                     self.write_to_console(f"Received the following status code: {Status_Codes(int(data)).name}.")
 
     def write_to_console(self, msg):
@@ -219,7 +214,7 @@ class ClientWindow(QWidget):
         # Comment this
         print("{0} - {1}".format(local_time, msg))
 
-    def write_in_chat(self, name: str, dest: str, message):
+    def write_in_chat(self, name: str, dest: str, message: str):
         if self.last_chat_name != name or self.last_chat_dest != dest:
             self.last_chat_name = name
             self.last_chat_dest = dest

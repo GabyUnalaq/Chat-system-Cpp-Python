@@ -169,23 +169,35 @@ void ServerClass::connect_client(SOCKET sock, SOCKADDR_IN addr) {
 	if (receive_res > 0) {
 		Sleep(10);
 		string name_string(name_char);
+		bool valid_name = false;
 
-		if (!clients.count(name_string)) { // name does not exist
+		if (clients.count(name_string)) { // name exists
+			if (!clients[name_string].connected) { // Exists and it's not connected
+				valid_name = true;
+			}
+			else { // Exists and it's connected
+				log("Name already exists. ", true);
+			}
+		}
+		else { // Name does not exist yet
+			valid_name = true;
+		}
+
+		if (valid_name) {
 			send_message(temp_client.cl_socket, StatusCodes::ConnAccepted);
 
 			add_client(name_string, temp_client);
 
-			log(" # Client connected with name " + name_string + " on " + 
+			log(" # Client connected with name " + name_string + " on " +
 				string(temp_client.cl_ip) + ":" + to_string(temp_client.cl_port) + ".");
 		}
-		else { // name already exists
+		else { // Invalid name
 			send_message(temp_client.cl_socket, StatusCodes::InvalidName);
-			log("Invalid name. ");
 		}
 	}
 	else { // Name not received
 		send_message(temp_client.cl_socket, StatusCodes::MissingName);
-		log("Name not received. ");
+		log("Name not received. ", true);
 	}
 }
 
